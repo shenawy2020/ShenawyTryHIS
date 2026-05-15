@@ -35,6 +35,28 @@ const defaultMenus: AppMenu[] = [
     componentName: 'AppComponent'
   },
   { 
+    id: 'central-mfe', 
+    path: 'inpatients', 
+    label: 'المرضى الداخليين', 
+    icon: '🛏️', 
+    description: 'متابعة المرضى المنومين وتوزيع الغرف.',
+    color: '#e91e63',
+    remoteUrl: 'http://localhost:8083/remoteEntry.json',
+    exposedModule: './Inpatients',
+    componentName: 'InpatientsComponent'
+  },
+  { 
+    id: 'central-mfe', 
+    path: 'outpatients', 
+    label: 'المرضى الخارجيين', 
+    icon: '🚶‍♂️', 
+    description: 'مواعيد العيادات الخارجية وحجوزات اليوم.',
+    color: '#2196f3',
+    remoteUrl: 'http://localhost:8083/remoteEntry.json',
+    exposedModule: './Outpatients',
+    componentName: 'OutpatientsComponent'
+  },
+  { 
     id: 'settings', 
     path: 'settings', 
     label: 'إعدادات الموديولات', 
