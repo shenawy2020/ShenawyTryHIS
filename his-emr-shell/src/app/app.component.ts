@@ -13,6 +13,8 @@ const EMR_REMOTES: Record<string, string> = {
   medications: 'http://localhost:8097/remoteEntry.json',
   labs:        'http://localhost:8098/remoteEntry.json',
   radiology:   'http://localhost:8099/remoteEntry.json',
+  procedures:  'http://localhost:8100/remoteEntry.json',
+  appointments: 'http://localhost:8101/remoteEntry.json',
 };
 
 const ON_DEMAND_TABS = [
@@ -20,6 +22,8 @@ const ON_DEMAND_TABS = [
   { key: 'medications', label: 'الأدوية',         icon: '💊', color: '#e65100' },
   { key: 'labs',        label: 'التحاليل',        icon: '🔬', color: '#6a1b9a' },
   { key: 'radiology',   label: 'الأشعة',          icon: '📷', color: '#01579b' },
+  { key: 'procedures',  label: 'الإجراءات',      icon: '🏥', color: '#33691e' },
+  { key: 'appointments', label: 'المواعيد',       icon: '📅', color: '#0277bd' },
 ];
 
 @Component({

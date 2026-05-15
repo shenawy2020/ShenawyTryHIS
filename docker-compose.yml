@@ -72,6 +72,16 @@ services:
     ports: ["8099:80"]
     networks: [his-network]
 
+  emr-procedures-mfe:
+    build: { context: ./emr-procedures-mfe, dockerfile: Dockerfile }
+    ports: ["8100:80"]
+    networks: [his-network]
+
+  emr-appointments-mfe:
+    build: { context: ./emr-appointments-mfe, dockerfile: Dockerfile }
+    ports: ["8101:80"]
+    networks: [his-network]
+
 networks:
   his-network:
     driver: bridge
