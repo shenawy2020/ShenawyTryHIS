@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
-
 import { DashboardComponent } from './dashboard.component';
 import { SettingsComponent } from './settings.component';
 import { PREDEFINED_MENUS } from './menus.config';
@@ -10,7 +9,7 @@ export const routes: Routes = [
   { path: 'settings', component: SettingsComponent }
 ];
 
-// تسجيل موديولات القائمة الجانبية
+// مسارات القائمة الجانبية (patient, pharmacy, central)
 PREDEFINED_MENUS.forEach(menu => {
   if (menu.path !== 'settings') {
     routes.push({
@@ -18,27 +17,21 @@ PREDEFINED_MENUS.forEach(menu => {
       loadComponent: () =>
         loadRemoteModule(menu.id, menu.exposedModule || './Component')
           .then((m) => m[menu.componentName || 'AppComponent'])
-          .catch(err => {
-            console.error(`Error loading remote module ${menu.id}:`, err);
-            return DashboardComponent;
-          }),
+          .catch(err => { console.error(`Error loading ${menu.id}:`, err); return DashboardComponent; }),
       data: { otherArguments: menu.otherArguments || '' }
     });
   }
 });
 
-// ==========================================
-// مسار EMR الديناميكي: /emr/patient-{id}
-// يُفتح برمجياً عند الضغط على مريض من القائمة
-// ==========================================
+// ══════════════════════════════════════════════════
+// EMR Shell — يُفتح داخل HIS Shell كـ Tab منفصل
+// كل مريض له مسار خاص: /emr/patient-P001
+// ══════════════════════════════════════════════════
 routes.push({
   path: 'emr/:patientKey',
   loadComponent: () =>
-    loadRemoteModule('emr-mfe', './Component')
+    loadRemoteModule('emr-shell', './Component')
       .then((m) => m['AppComponent'])
-      .catch(err => {
-        console.error('Error loading EMR module:', err);
-        return DashboardComponent;
-      }),
+      .catch(err => { console.error('Error loading EMR Shell:', err); return DashboardComponent; }),
   data: {}
 });

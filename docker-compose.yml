@@ -1,53 +1,76 @@
 services:
-  # التطبيق الرئيسي (Host Shell)
   his-shell:
-    build:
-      context: ./his-shell
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80"
-    networks:
-      - his-network
+    build: { context: ./his-shell, dockerfile: Dockerfile }
+    ports: ["8080:80"]
+    networks: [his-network]
 
-  # موديول المرضى
   his-patient-mfe:
-    build:
-      context: ./his-patient-mfe
-      dockerfile: Dockerfile
-    ports:
-      - "8081:80"
-    networks:
-      - his-network
+    build: { context: ./his-patient-mfe, dockerfile: Dockerfile }
+    ports: ["8081:80"]
+    networks: [his-network]
 
-  # موديول الصيدلية
   his-pharmacy-mfe:
-    build:
-      context: ./his-pharmacy-mfe
-      dockerfile: Dockerfile
-    ports:
-      - "8082:80"
-    networks:
-      - his-network
+    build: { context: ./his-pharmacy-mfe, dockerfile: Dockerfile }
+    ports: ["8082:80"]
+    networks: [his-network]
 
-  # موديول السنترال
   his-central-mfe:
-    build:
-      context: ./his-central-mfe
-      dockerfile: Dockerfile
-    ports:
-      - "8083:80"
-    networks:
-      - his-network
+    build: { context: ./his-central-mfe, dockerfile: Dockerfile }
+    ports: ["8083:80"]
+    networks: [his-network]
 
-  # السجل الطبي الإلكتروني (EMR)
-  his-emr-mfe:
-    build:
-      context: ./his-emr-mfe
-      dockerfile: Dockerfile
-    ports:
-      - "8090:80"
-    networks:
-      - his-network
+  # ── EMR Shell ──────────────────────────────────────────
+  his-emr-shell:
+    build: { context: ./his-emr-shell, dockerfile: Dockerfile }
+    ports: ["8090:80"]
+    networks: [his-network]
+
+  # ── EMR Sub-MFEs (Always Visible) ──────────────────────
+  emr-facesheet-mfe:
+    build: { context: ./emr-facesheet-mfe, dockerfile: Dockerfile }
+    ports: ["8091:80"]
+    networks: [his-network]
+
+  emr-vitals-mfe:
+    build: { context: ./emr-vitals-mfe, dockerfile: Dockerfile }
+    ports: ["8092:80"]
+    networks: [his-network]
+
+  emr-diseases-mfe:
+    build: { context: ./emr-diseases-mfe, dockerfile: Dockerfile }
+    ports: ["8093:80"]
+    networks: [his-network]
+
+  emr-history-mfe:
+    build: { context: ./emr-history-mfe, dockerfile: Dockerfile }
+    ports: ["8094:80"]
+    networks: [his-network]
+
+  emr-allergies-mfe:
+    build: { context: ./emr-allergies-mfe, dockerfile: Dockerfile }
+    ports: ["8095:80"]
+    networks: [his-network]
+
+  # ── EMR Sub-MFEs (On-Demand) ───────────────────────────
+  emr-notes-mfe:
+    build: { context: ./emr-notes-mfe, dockerfile: Dockerfile }
+    ports: ["8096:80"]
+    networks: [his-network]
+
+  emr-medications-mfe:
+    build: { context: ./emr-medications-mfe, dockerfile: Dockerfile }
+    ports: ["8097:80"]
+    networks: [his-network]
+
+  emr-labs-mfe:
+    build: { context: ./emr-labs-mfe, dockerfile: Dockerfile }
+    ports: ["8098:80"]
+    networks: [his-network]
+
+  emr-radiology-mfe:
+    build: { context: ./emr-radiology-mfe, dockerfile: Dockerfile }
+    ports: ["8099:80"]
+    networks: [his-network]
 
 networks:
   his-network:

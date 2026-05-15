@@ -1,5 +1,6 @@
 {
-  "patient-mfe": "http://localhost:8081/remoteEntry.json",
-  "pharmacy-mfe": "http://localhost:8082/remoteEntry.json",
-  "emr-mfe": "http://localhost:8090/remoteEntry.json"
+  "patient-mfe":      "http://localhost:8081/remoteEntry.json",
+  "pharmacy-mfe":     "http://localhost:8082/remoteEntry.json",
+  "central-mfe":      "http://localhost:8083/remoteEntry.json",
+  "emr-shell":        "http://localhost:8090/remoteEntry.json"
 }
