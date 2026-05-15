@@ -1,0 +1,38 @@
+<div style="background-color: #e8f8f5; padding: 20px; border-radius: 8px; border-left: 5px solid #1abc9c; font-family: sans-serif; height: 100%;">
+  <h2 style="color: #16a085; margin-top: 0;">👨‍⚕️ تسجيل بيانات المريض</h2>
+  <p>قم بإدخال بيانات المريض هنا. جرب التنقل لتبويب آخر والعودة لتتأكد من حفظ البيانات (State Preservation).</p>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">اسم المريض</label>
+      <input type="text" placeholder="أدخل اسم المريض..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+    </div>
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">الرقم القومي</label>
+      <input type="number" placeholder="أدخل الرقم القومي..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+    </div>
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">رقم الهاتف</label>
+      <input type="tel" placeholder="أدخل رقم الهاتف..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+    </div>
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">فصيلة الدم</label>
+      <select style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+        <option>A+</option>
+        <option>A-</option>
+        <option>B+</option>
+        <option>B-</option>
+        <option>O+</option>
+        <option>O-</option>
+        <option>AB+</option>
+        <option>AB-</option>
+      </select>
+    </div>
+    <div style="grid-column: span 2;">
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">التاريخ المرضي (ملاحظات)</label>
+      <textarea rows="4" placeholder="اكتب ملاحظاتك هنا..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;"></textarea>
+    </div>
+  </div>
+
+  <button style="background-color: #1abc9c; color: white; font-size: 16px; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; margin-top: 20px; font-weight: bold;">💾 حفظ البيانات</button>
+</div>

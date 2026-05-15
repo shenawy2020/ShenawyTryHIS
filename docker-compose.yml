@@ -1,0 +1,54 @@
+services:
+  # التطبيق الرئيسي (Host Shell)
+  his-shell:
+    build:
+      context: ./his-shell
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - his-network
+
+  # موديول المرضى
+  his-patient-mfe:
+    build:
+      context: ./his-patient-mfe
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    networks:
+      - his-network
+
+  # موديول الصيدلية
+  his-pharmacy-mfe:
+    build:
+      context: ./his-pharmacy-mfe
+      dockerfile: Dockerfile
+    ports:
+      - "8082:80"
+    networks:
+      - his-network
+
+  # موديول السنترال
+  his-central-mfe:
+    build:
+      context: ./his-central-mfe
+      dockerfile: Dockerfile
+    ports:
+      - "8083:80"
+    networks:
+      - his-network
+
+  # السجل الطبي الإلكتروني (EMR)
+  his-emr-mfe:
+    build:
+      context: ./his-emr-mfe
+      dockerfile: Dockerfile
+    ports:
+      - "8090:80"
+    networks:
+      - his-network
+
+networks:
+  his-network:
+    driver: bridge

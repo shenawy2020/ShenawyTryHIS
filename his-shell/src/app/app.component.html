@@ -1,0 +1,64 @@
+<div style="font-family: sans-serif; display: flex; height: 100vh; overflow: hidden;" dir="rtl">
+  <!-- Sidebar -->
+  <aside style="width: 250px; background-color: #2c3e50; color: white; padding: 20px; box-shadow: -2px 0 5px rgba(0,0,0,0.1); z-index: 10;">
+    <h2 style="border-bottom: 2px solid #34495e; padding-bottom: 10px;">نظام HIS الشامل</h2>
+    <p style="color: #95a5a6; font-size: 14px;">بيئة Micro Frontends</p>
+    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+      <!-- رابط الداشبورد -->
+      <li style="margin-bottom: 15px;">
+        <a routerLink="/" style="color: #ecf0f1; text-decoration: none; font-size: 18px; display: block; padding: 10px; border-radius: 4px; transition: background 0.3s;" [style.background]="activePath === '' ? '#34495e' : 'transparent'">
+          🏠 الرئيسية (الداشبورد)
+        </a>
+      </li>
+      <li *ngFor="let menu of menus" style="margin-bottom: 15px;">
+        <a [routerLink]="'/' + menu.path" style="color: #ecf0f1; text-decoration: none; font-size: 18px; display: block; padding: 10px; border-radius: 4px; transition: background 0.3s;" [style.background]="activePath === menu.path ? '#34495e' : 'transparent'">
+          {{ menu.icon }} {{ menu.label }}
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main style="flex: 1; display: flex; flex-direction: column; background-color: #f4f6f8;">
+    
+    <!-- Top Header -->
+    <header style="background-color: white; padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 5;">
+      <h3 style="margin: 0; color: #34495e;">التطبيق المضيف (Host Shell)</h3>
+    </header>
+
+    <!-- Tab Bar -->
+    <div *ngIf="tabs.length > 0" style="display: flex; background-color: #e0e6ed; padding: 10px 10px 0 10px; gap: 5px; border-bottom: 1px solid #bdc3c7;">
+      <div *ngFor="let tab of tabs" 
+           (click)="addTabIfNeeded(tab.path); router.navigate(['/' + tab.path])"
+           [style.background]="activePath === tab.path ? 'white' : '#cbd4de'"
+           [style.border-bottom]="activePath === tab.path ? 'none' : '1px solid #bdc3c7'"
+           style="padding: 10px 15px; border-radius: 8px 8px 0 0; border: 1px solid #bdc3c7; cursor: pointer; display: flex; align-items: center; gap: 10px; min-width: 120px; font-weight: bold; color: #2c3e50;">
+        
+        <span>{{ tab.icon }} {{ tab.label }}</span>
+        
+        <!-- Refresh Button -->
+        <button (click)="refreshTab(tab.path, $event)" title="تحديث الشاشة"
+                style="background: transparent; border: none; color: #3498db; cursor: pointer; font-size: 14px; font-weight: bold; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
+                onmouseover="this.style.background='#ebf5fb'"
+                onmouseout="this.style.background='transparent'">
+          🔄
+        </button>
+
+        <!-- Close Button -->
+        <button (click)="closeTab(tab.path, $event)" title="إغلاق التاب"
+                style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
+                onmouseover="this.style.background='#fadbd8'"
+                onmouseout="this.style.background='transparent'">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <!-- Remote Content Injection Area -->
+    <div style="padding: 20px; flex: 1; overflow-y: auto;">
+      <div style="height: 100%;">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </main>
+</div>

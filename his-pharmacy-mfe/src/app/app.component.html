@@ -1,0 +1,34 @@
+<div style="background-color: #fef9e7; padding: 20px; border-radius: 8px; border-left: 5px solid #f1c40f; font-family: sans-serif; height: 100%;">
+  <h2 style="color: #f39c12; margin-top: 0;">💊 صرف الأدوية (الصيدلية)</h2>
+  <p>نافذة صرف العلاج للمرضى. البيانات ستبقى محفوظة بفضل الـ Route Reuse Strategy.</p>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+    
+    <div style="grid-column: span 2; padding: 15px; background: #f4ecf8; border: 2px dashed #8e44ad; border-radius: 8px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #8e44ad;">البيانات الإضافية الممررة (Other Arguments)</label>
+      <input type="text" [value]="otherArguments || 'لا يوجد بيانات ممررة (Empty)'" readonly style="width: 100%; padding: 10px; border: 1px solid #d2b4de; border-radius: 4px; box-sizing: border-box; background: #fff; font-weight: bold; color: #333;">
+    </div>
+
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">اسم الدواء</label>
+      <input type="text" placeholder="ابحث عن الدواء..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+    </div>
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">الكمية (العلب)</label>
+      <input type="number" min="1" value="1" style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+    </div>
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">اسم الطبيب المعالج</label>
+      <input type="text" placeholder="الطبيب الذي كتب الروشتة..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+    </div>
+    <div>
+      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">هل الدواء مغطى بالتأمين؟</label>
+      <select style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
+        <option>نعم (شامل التأمين)</option>
+        <option>لا (دفع نقدي)</option>
+      </select>
+    </div>
+  </div>
+
+  <button style="background-color: #f39c12; color: white; font-size: 16px; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; margin-top: 20px; font-weight: bold;">🧾 تأكيد وصرف</button>
+</div>
