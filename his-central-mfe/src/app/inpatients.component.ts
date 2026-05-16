@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
@@ -84,10 +84,12 @@ export class InpatientsComponent {
   otherArguments = '';
   patients = INPATIENTS;
 
-  constructor(private route: ActivatedRoute) {
-    this.route.data.subscribe(data => {
-      this.otherArguments = data?.['otherArguments'] || '';
-    });
+  constructor(@Optional() private route: ActivatedRoute) {
+    if (this.route) {
+      this.route.data.subscribe(data => {
+        this.otherArguments = data?.['otherArguments'] || '';
+      });
+    }
   }
 
   openEMR(patient: any) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -21,12 +21,14 @@ export class AppComponent implements OnInit {
   otherArguments: string = '';
   patients = ALL_PATIENTS;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(@Optional() private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.data.subscribe(data => {
-      this.otherArguments = data?.['otherArguments'] || '';
-    });
+    if (this.route) {
+      this.route.data.subscribe(data => {
+        this.otherArguments = data?.['otherArguments'] || '';
+      });
+    }
   }
 
   openEMR(patient: any) {
