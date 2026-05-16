@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd, RouteReuseStrategy } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CustomRouteReuseStrategy } from './custom-route-reuse-strategy';
@@ -21,8 +21,13 @@ export class AppComponent implements OnInit, OnDestroy {
   menus = PREDEFINED_MENUS;
   tabs: Tab[] = [];
   activePath: string = '';
+  messages: any[] = [];
 
-  constructor(public router: Router, private routeReuseStrategy: RouteReuseStrategy) {
+  constructor(
+    public router: Router, 
+    private routeReuseStrategy: RouteReuseStrategy,
+    private ngZone: NgZone
+  ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const path = event.urlAfterRedirects.split('?')[0].replace(/^\//, '');
@@ -33,8 +38,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // الاستماع لأحداث فتح EMR من his-patient-mfe عبر postMessage
     window.addEventListener('message', this.handleEMRMessage);
+    
+    window.addEventListener('HIS_MFE_MESSAGE', (e: any) => {
+      this.ngZone.run(() => {
+        this.messages.unshift(e.detail);
+        if (this.messages.length > 5) this.messages.pop();
+        console.log('Shell received message:', e.detail);
+      });
+    });
   }
 
   ngOnDestroy() {
@@ -45,7 +57,6 @@ export class AppComponent implements OnInit, OnDestroy {
     if (event.data?.type === 'OPEN_EMR') {
       const { patientId, patientName } = event.data;
       const path = `emr/patient-${patientId}`;
-      // إضافة التاب إذا لم يكن موجوداً
       if (!this.tabs.find(t => t.path === path)) {
         this.tabs.push({ path, label: patientName || `مريض ${patientId}`, icon: '👤' });
       }
@@ -60,7 +71,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.tabs.unshift({ path: '', label: 'الداشبورد', icon: '🏠' });
         return;
       }
-      // مسارات EMR تُضاف ديناميكياً عبر postMessage فقط — لا تُضاف هنا
       if (path.startsWith('emr/')) return;
 
       const predefinedMenu = this.menus.find(m => m.path === path);
@@ -101,6 +111,26 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       if (strategy.removeCachedRoute) strategy.removeCachedRoute(path);
       this.router.navigate(['/' + path]);
+    }
+  }
+  
+  sendGlobalMessage() {
+    const msg = prompt('أدخل الرسالة التي تود إرسالها:');
+    if (msg) {
+      let targetPatientId = null;
+      // تحسين استخراج الـ Id ليتطابق مع ما يتم استقباله في الـ EMR
+      if (this.activePath.startsWith('emr/')) {
+        targetPatientId = this.activePath.split('/').pop(); // سيأخذ patient-P001 مثلاً
+      }
+
+      window.dispatchEvent(new CustomEvent('HIS_SHELL_MESSAGE', { 
+        detail: { 
+          content: msg, 
+          from: 'Main Shell', 
+          targetPatientId: targetPatientId,
+          time: new Date().toLocaleTimeString('ar-EG') 
+        } 
+      }));
     }
   }
 }
