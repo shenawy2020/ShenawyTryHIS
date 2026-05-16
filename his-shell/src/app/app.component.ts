@@ -133,4 +133,11 @@ export class AppComponent implements OnInit, OnDestroy {
       }));
     }
   }
+
+  scrollTabs(amount: number) {
+    const container = document.getElementById('tabs-scroll-container');
+    if (container) {
+      container.scrollLeft += amount;
+    }
+  }
 }
