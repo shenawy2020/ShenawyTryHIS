@@ -1,38 +1,50 @@
-<div style="background-color: #e8f8f5; padding: 20px; border-radius: 8px; border-left: 5px solid #1abc9c; font-family: sans-serif; height: 100%;">
-  <h2 style="color: #16a085; margin-top: 0;">👨‍⚕️ تسجيل بيانات المريض</h2>
-  <p>قم بإدخال بيانات المريض هنا.</p>
+<div style="background-color: #e8f8f5; padding: 20px; border-radius: 8px; border-right: 5px solid #1abc9c; font-family: 'Segoe UI', sans-serif; direction: rtl; min-height: 100vh;">
   
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-    
-    <div style="grid-column: span 2; padding: 15px; background: #f4ecf8; border: 2px dashed #8e44ad; border-radius: 8px;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #8e44ad;">البيانات الإضافية الممررة (Other Arguments)</label>
-      <input type="text" [value]="otherArguments || 'لا يوجد بيانات ممررة (Empty)'" readonly style="width: 100%; padding: 10px; border: 1px solid #d2b4de; border-radius: 4px; box-sizing: border-box; background: #fff; font-weight: bold; color: #333;">
-    </div>
-
-    <div>
-      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">اسم المريض</label>
-      <input type="text" placeholder="أدخل اسم المريض..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
-    </div>
-    <div>
-      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">الرقم القومي</label>
-      <input type="number" placeholder="أدخل الرقم القومي..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
-    </div>
-    <div>
-      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">رقم الهاتف</label>
-      <input type="tel" placeholder="أدخل رقم الهاتف..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
-    </div>
-    <div>
-      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">فصيلة الدم</label>
-      <select style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;">
-        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-        <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-      </select>
-    </div>
-    <div style="grid-column: span 2;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50;">التاريخ المرضي (ملاحظات)</label>
-      <textarea rows="4" placeholder="اكتب ملاحظاتك هنا..." style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box;"></textarea>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="color: #16a085; margin: 0;">👨‍⚕️ إدارة بيانات المرضى</h2>
+    <div style="background: #f4ecf8; padding: 8px 15px; border: 2px dashed #8e44ad; border-radius: 8px; font-size: 13px;">
+      <span style="font-weight: bold; color: #8e44ad;">Other Args:</span> {{ otherArguments || 'Empty' }}
     </div>
   </div>
 
-  <button style="background-color: #1abc9c; color: white; font-size: 16px; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; margin-top: 20px; font-weight: bold;">💾 حفظ البيانات</button>
+  <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <table style="width: 100%; border-collapse: collapse; text-align: right;">
+      <thead>
+        <tr style="background-color: #1abc9c; color: white;">
+          <th style="padding: 12px; border-bottom: 2px solid #16a085;">اسم المريض</th>
+          <th style="padding: 12px; border-bottom: 2px solid #16a085;">السن</th>
+          <th style="padding: 12px; border-bottom: 2px solid #16a085;">الجنس</th>
+          <th style="padding: 12px; border-bottom: 2px solid #16a085;">فصيلة الدم</th>
+          <th style="padding: 12px; border-bottom: 2px solid #16a085; text-align: center;">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of patients" style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;" onmouseover="this.style.background='#f9f9f9'" onmouseout="this.style.background='white'">
+          <td style="padding: 12px; font-weight: bold; color: #2c3e50;">{{ p.name }}</td>
+          <td style="padding: 12px; color: #7f8c8d;">{{ p.age }} سنة</td>
+          <td style="padding: 12px; color: #7f8c8d;">{{ p.gender }}</td>
+          <td style="padding: 12px; color: #e67e22; font-weight: bold;">{{ p.bloodType }}</td>
+          <td style="padding: 12px; text-align: center;">
+            <button (click)="openEMR(p)" style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.3s;" onmouseover="this.style.background='#2980b9'" onmouseout="this.style.background='#3498db'">
+              📋 فتح ملف الـ EMR
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 30px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <h3 style="color: #16a085; margin-bottom: 15px;">➕ إضافة مريض جديد</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+      <input type="text" placeholder="اسم المريض..." style="padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px;">
+      <input type="number" placeholder="العمر..." style="padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px;">
+      <input type="tel" placeholder="رقم الهاتف..." style="padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px;">
+      <select style="padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px;">
+        <option>A+</option><option>B+</option><option>O+</option><option>AB+</option>
+      </select>
+    </div>
+    <button style="background-color: #1abc9c; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; margin-top: 15px; font-weight: bold;">💾 حفظ البيانات</button>
+  </div>
+
 </div>
