@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewContainerRef, Type } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef, Type, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
@@ -33,6 +33,29 @@ const ON_DEMAND_TABS = [
   template: `
 <div style="height:100%;display:flex;flex-direction:column;background:#f0f4f8;font-family:'Segoe UI',sans-serif;direction:rtl;">
 
+  <!-- EMR TOP BAR (Improved Visibility) -->
+  <div style="background:#2c3e50; color:white; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.2); border-bottom: 3px solid #3498db;">
+    <div style="display:flex; align-items:center; gap:20px; flex:1;">
+      <span style="font-weight:bold; font-size:18px; letter-spacing: 0.5px;">📁 ملف المريض الإلكتروني</span>
+      
+      <!-- Scrolling or Pulsing Message -->
+      <div *ngIf="lastShellMessage" style="background:#f1c40f; color:#000; padding:6px 20px; border-radius:4px; font-size:14px; font-weight:bold; display:flex; align-items:center; gap:10px; border: 1px solid #d4ac0d; animation: slideIn 0.3s ease-out;">
+        <span style="font-size:18px;">🔔</span>
+        <span>رسالة من الإدارة: <b>{{ lastShellMessage }}</b></span>
+        <button (click)="lastShellMessage=''" style="background:rgba(0,0,0,0.1); border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-weight:bold; display:flex; align-items:center; justify-content:center;">&times;</button>
+      </div>
+    </div>
+    
+    <div style="display:flex; gap:12px; align-items:center;">
+       <button (click)="sendMessageToShell()" style="background:#3498db; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:bold; transition: background 0.2s;" onmouseover="this.style.background='#2980b9'" onmouseout="this.style.background='#3498db'">
+        💬 إرسال رسالة للإدارة
+      </button>
+      <span style="background:#34495e; color:#bdc3c7; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:bold; border: 1px solid #455a64;">
+        🆔 {{ patientIdDisplay }}
+      </span>
+    </div>
+  </div>
+
   <!-- FACESHEET (Always) -->
   <div style="padding:12px 16px 0;">
     <ng-container #facesheetHost></ng-container>
@@ -54,10 +77,6 @@ const ON_DEMAND_TABS = [
       style="padding:8px 16px;border:none;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;transition:all 0.2s;">
       {{ tab.icon }} {{ tab.label }}
     </button>
-    <div style="flex:1;"></div>
-    <span style="background:#e3f2fd;color:#1565c0;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:bold;">
-      🆔 PatientId: {{ patientId }}
-    </span>
   </div>
 
   <!-- ON-DEMAND CONTENT -->
@@ -69,6 +88,13 @@ const ON_DEMAND_TABS = [
   </div>
 
 </div>
+
+<style>
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+</style>
   `,
 })
 export class AppComponent implements OnInit {
@@ -79,25 +105,49 @@ export class AppComponent implements OnInit {
   @ViewChild('allergiesHost',  { read: ViewContainerRef, static: true }) allergiesHost!: ViewContainerRef;
   @ViewChild('onDemandHost',   { read: ViewContainerRef, static: true }) onDemandHost!: ViewContainerRef;
 
-  patientId = '';
+  patientId = ''; // المعرف البرمجي (مثل patient-P001)
+  patientIdDisplay = ''; // المعرف للعرض (مثل P001)
   activeTab = '';
   onDemandTabs = ON_DEMAND_TABS;
-  private loadedOnDemand = new Set<string>();
+  lastShellMessage = '';
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private ngZone: NgZone) {}
 
   async ngOnInit() {
-    // قراءة patientId من الـ route params أو queryParams
-    this.patientId = this.route.snapshot.params?.['patientKey']
-      || this.route.snapshot.queryParams?.['patientId']
-      || 'P-001';
+    // قراءة الـ Id من المسار
+    this.patientId = this.route.snapshot.params?.['patientKey'] || 'patient-P001';
+    this.patientIdDisplay = this.patientId.replace('patient-', '');
 
-    // تحميل المكونات الأساسية (Always Visible)
     await this.loadInto('facesheet',  this.facesheetHost);
     await this.loadInto('vitals',     this.vitalsHost);
     await this.loadInto('diseases',   this.diseasesHost);
     await this.loadInto('history',    this.historyHost);
     await this.loadInto('allergies',  this.allergiesHost);
+
+    // الاستماع لرسائل الشيل الرئيسي
+    window.addEventListener('HIS_SHELL_MESSAGE', (e: any) => {
+      this.ngZone.run(() => {
+        const target = e.detail.targetPatientId;
+        // الفحص الآن أصبح دقيقاً بناءً على الـ Id الكامل للمسار
+        if (target === this.patientId) {
+          this.lastShellMessage = e.detail.content;
+          console.log(`EMR Shell (${this.patientId}) received message!`);
+        }
+      });
+    });
+  }
+
+  sendMessageToShell() {
+    const msg = prompt('أدخل رسالة لإرسالها إلى إدارة النظام:');
+    if (msg) {
+      window.dispatchEvent(new CustomEvent('HIS_MFE_MESSAGE', {
+        detail: { 
+          content: msg, 
+          from: `EMR (${this.patientIdDisplay})`, 
+          time: new Date().toLocaleTimeString('ar-EG') 
+        }
+      }));
+    }
   }
 
   private async loadInto(key: string, host: ViewContainerRef) {
@@ -107,7 +157,7 @@ export class AppComponent implements OnInit {
       const comp: Type<any> = m['AppComponent'];
       host.clear();
       const ref = host.createComponent(comp);
-      ref.instance.patientId = this.patientId;
+      ref.instance.patientId = this.patientIdDisplay; // تمرير المعرف المختصر للموديولات الداخلية
       ref.changeDetectorRef.detectChanges();
     } catch (e) {
       console.error(`Failed to load EMR module [${key}]:`, e);
