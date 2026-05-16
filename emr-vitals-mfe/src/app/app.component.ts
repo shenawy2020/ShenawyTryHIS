@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
     </div>
   </div>
   <div style="margin-top:10px;display:flex;gap:8px;">
-    <button (click)="addVital()" style="flex:1;background:#e53935;color:white;border:none;padding:6px;border-radius:6px;cursor:pointer;font-size:12px;">➕ إضافة قراءة</button>
+    <button (click)="addVitals()" style="flex:1;background:#e53935;color:white;border:none;padding:6px;border-radius:6px;cursor:pointer;font-size:12px;">➕ إضافة قراءة</button>
   </div>
 </div>
   `
@@ -37,7 +37,24 @@ export class AppComponent implements OnInit {
     // Future: GET /api/patients/${this.patientId}/vitals
   }
 
-  addVital() {
-    alert('سيتم فتح نموذج إضافة قراءة جديدة');
+  addVitals() {
+    const newVitals = {
+      bp: '130/85',
+      pulse: 75,
+      temp: 37.2,
+      o2: 99,
+      timestamp: new Date().toLocaleTimeString('ar-EG')
+    };
+    
+    // إرسال حدث عالمي ليسمعه الموديولات الأخرى (مثل موديول الملاحظات)
+    const event = new CustomEvent('EMR_VITALS_UPDATED', { 
+      detail: { 
+        patientId: this.patientId,
+        vitals: newVitals
+      } 
+    });
+    window.dispatchEvent(event);
+    
+    alert('تم تحديث العلامات الحيوية وإبلاغ النظام!');
   }
 }

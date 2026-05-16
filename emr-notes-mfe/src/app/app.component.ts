@@ -34,7 +34,16 @@ export class AppComponent implements OnInit {
   ];
 
   ngOnInit() {
-    // Future: GET /api/patients/${this.patientId}/notes
+    // الاستماع لتحديثات العلامات الحيوية من الموديولات الأخرى
+    window.addEventListener('EMR_VITALS_UPDATED', (event: any) => {
+      if (event.detail.patientId === this.patientId) {
+        const v = event.detail.vitals;
+        const vitalsText = `\n[تحديث تلقائي للعلامات الحيوية - ${v.timestamp}]:\n` +
+                          `- الضغط: ${v.bp}\n- النبض: ${v.pulse}\n- الحرارة: ${v.temp}\n- الأكسجين: ${v.o2}%\n`;
+        this.newNote += vitalsText;
+        console.log('Received Vitals in Notes:', v);
+      }
+    });
   }
 
   save() {
