@@ -1,10 +1,9 @@
 <div style="font-family: sans-serif; display: flex; height: 100vh; overflow: hidden;" dir="rtl">
   <!-- Sidebar -->
-  <aside style="width: 250px; background-color: #2c3e50; color: white; padding: 20px; box-shadow: -2px 0 5px rgba(0,0,0,0.1); z-index: 10;">
+  <aside style="width: 250px; background-color: #2c3e50; color: white; padding: 20px; box-shadow: -2px 0 5px rgba(0,0,0,0.1); z-index: 10; flex-shrink: 0;">
     <h2 style="border-bottom: 2px solid #34495e; padding-bottom: 10px;">نظام HIS الشامل</h2>
     <p style="color: #95a5a6; font-size: 14px;">بيئة Micro Frontends</p>
     <ul style="list-style: none; padding: 0; margin-top: 30px;">
-      <!-- رابط الداشبورد -->
       <li style="margin-bottom: 15px;">
         <a routerLink="/" style="color: #ecf0f1; text-decoration: none; font-size: 18px; display: block; padding: 10px; border-radius: 4px; transition: background 0.3s;" [style.background]="activePath === '' ? '#34495e' : 'transparent'">
           🏠 الرئيسية (الداشبورد)
@@ -19,54 +18,66 @@
   </aside>
 
   <!-- Main Content Area -->
-  <main style="flex: 1; display: flex; flex-direction: column; background-color: #f4f6f8;">
+  <main style="flex: 1; display: flex; flex-direction: column; background-color: #f4f6f8; min-width: 0;">
     
     <!-- Top Header -->
-    <header style="background-color: white; padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 5; display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="margin: 0; color: #34495e;">التطبيق المضيف (Host Shell)</h3>
+    <header style="background-color: white; padding: 12px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 5; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+      <h3 style="margin: 0; color: #34495e; font-size: 16px;">نظام المعلومات الصحية (HIS Shell)</h3>
       
       <!-- Message Center -->
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <div *ngIf="messages.length > 0" style="font-size: 12px; background: #fff3e0; padding: 5px 10px; border-radius: 4px; border-right: 3px solid #ff9800; max-width: 300px;">
-          <strong style="color: #e65100;">آخر رسالة من [{{ messages[0].from }}]:</strong> {{ messages[0].content }}
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div *ngIf="messages.length > 0" 
+             style="font-size: 12px; background: #fff3e0; padding: 5px 12px; border-radius: 4px; border-right: 3px solid #ff9800; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <strong style="color: #e65100;">📩 [{{ messages[0].from }}]:</strong> {{ messages[0].content }}
         </div>
         <button (click)="sendGlobalMessage()" 
-                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
-          💬 إرسال رسالة للموديولات
+                style="background: #3498db; color: white; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; white-space: nowrap;">
+          💬 إرسال رسالة
         </button>
       </div>
     </header>
 
-    <!-- Tab Bar -->
-    <div *ngIf="tabs.length > 0" style="display: flex; background-color: #e0e6ed; padding: 10px 10px 0 10px; gap: 5px; border-bottom: 1px solid #bdc3c7;">
-      <div *ngFor="let tab of tabs" 
-           (click)="addTabIfNeeded(tab.path); router.navigate(['/' + tab.path])"
-           [style.background]="activePath === tab.path ? 'white' : '#cbd4de'"
-           [style.border-bottom]="activePath === tab.path ? 'none' : '1px solid #bdc3c7'"
-           style="padding: 10px 15px; border-radius: 8px 8px 0 0; border: 1px solid #bdc3c7; cursor: pointer; display: flex; align-items: center; gap: 10px; min-width: 120px; font-weight: bold; color: #2c3e50;">
+    <!-- ═══════════════════════════════════════════ -->
+    <!--         WRAPPING TAB BAR (Multi-Row)       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div *ngIf="tabs.length > 0" 
+         style="background: #dde3ea; border-bottom: 2px solid #bdc3c7; flex-shrink: 0; padding: 8px 8px 0;">
+      
+      <!-- Tabs Container (wraps to next row automatically) -->
+      <div style="display: flex; flex-wrap: wrap; gap: 4px;">
         
-        <span>{{ tab.icon }} {{ tab.label }}</span>
-        
-        <!-- Refresh Button -->
-        <button (click)="refreshTab(tab.path, $event)" title="تحديث الشاشة"
-                style="background: transparent; border: none; color: #3498db; cursor: pointer; font-size: 14px; font-weight: bold; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
-                onmouseover="this.style.background='#ebf5fb'"
-                onmouseout="this.style.background='transparent'">
-          🔄
-        </button>
+        <div *ngFor="let tab of tabs"
+             (click)="router.navigate(['/' + tab.path])"
+             [style.background]="activePath === tab.path ? 'white' : '#c8d3de'"
+             [style.color]="activePath === tab.path ? '#2c3e50' : '#546e7a'"
+             [style.box-shadow]="activePath === tab.path ? '0 -2px 8px rgba(0,0,0,0.12)' : 'none'"
+             [style.border]="activePath === tab.path ? '1px solid #bdc3c7' : '1px solid transparent'"
+             style="display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 8px 8px 0 0; cursor: pointer; max-width: 190px; font-size: 13px; font-weight: 600; border-bottom: none; transition: all 0.15s; user-select: none; margin-bottom: 0;">
+          
+          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 60px;">
+            {{ tab.icon }} {{ tab.label }}
+          </span>
+          
+          <!-- Refresh Button -->
+          <button (click)="refreshTab(tab.path, $event)" title="تحديث"
+                  style="background: transparent; border: none; color: #3498db; cursor: pointer; font-size: 12px; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;"
+                  onmouseover="this.style.background='#ebf5fb'" onmouseout="this.style.background='transparent'">
+            🔄
+          </button>
 
-        <!-- Close Button -->
-        <button (click)="closeTab(tab.path, $event)" title="إغلاق التاب"
-                style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
-                onmouseover="this.style.background='#fadbd8'"
-                onmouseout="this.style.background='transparent'">
-          &times;
-        </button>
+          <!-- Close Button -->
+          <button (click)="closeTab(tab.path, $event)" title="إغلاق"
+                  style="background: transparent; border: none; color: #95a5a6; cursor: pointer; font-size: 15px; font-weight: bold; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;"
+                  onmouseover="this.style.color='#e74c3c'; this.style.background='#fadbd8';" onmouseout="this.style.color='#95a5a6'; this.style.background='transparent';">
+            &times;
+          </button>
+        </div>
+
       </div>
     </div>
 
     <!-- Remote Content Injection Area -->
-    <div style="padding: 20px; flex: 1; overflow-y: auto;">
+    <div style="padding: 20px; flex: 1; overflow-y: auto; min-height: 0;">
       <div style="height: 100%;">
         <router-outlet></router-outlet>
       </div>

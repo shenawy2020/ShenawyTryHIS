@@ -35,6 +35,17 @@ const defaultMenus: AppMenu[] = [
     componentName: 'AppComponent'
   },
   { 
+    id: 'lab-mfe', 
+    path: 'lab', 
+    label: 'المختبر والتحاليل', 
+    icon: '🔬', 
+    description: 'عرض نتائج التحاليل والتحكم الكامل في العينات الطبية.',
+    color: '#6a1b9a',
+    remoteUrl: 'http://localhost:8102/remoteEntry.json',
+    exposedModule: './Component',
+    componentName: 'AppComponent'
+  },
+  { 
     id: 'central-mfe', 
     path: 'inpatients', 
     label: 'المرضى الداخليين', 
