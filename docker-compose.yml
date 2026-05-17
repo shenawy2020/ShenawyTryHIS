@@ -82,6 +82,18 @@ services:
     ports: ["8101:80"]
     networks: [his-network]
 
+  # ── Shared Library & Custom MFEs ──────────────────────────
+  his-shared-lib:
+    build: { context: ./his-shared-lib, dockerfile: Dockerfile }
+    ports: ["8200:80"]
+    networks: [his-network]
+
+  his-lab-mfe:
+    build: { context: ./his-lab-mfe, dockerfile: Dockerfile }
+    ports: ["8102:80"]
+    networks: [his-network]
+
 networks:
   his-network:
     driver: bridge
+

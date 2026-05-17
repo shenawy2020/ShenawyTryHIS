@@ -4,7 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 
 const EMR_REMOTES: Record<string, string> = {
-  facesheet:   'http://localhost:8091/remoteEntry.json',
   vitals:      'http://localhost:8092/remoteEntry.json',
   diseases:    'http://localhost:8093/remoteEntry.json',
   history:     'http://localhost:8094/remoteEntry.json',
@@ -56,9 +55,9 @@ const ON_DEMAND_TABS = [
     </div>
   </div>
 
-  <!-- FACESHEET (Always) -->
+  <!-- PATIENT BANNER (Dynamically loaded from his-shared-lib) -->
   <div style="padding:12px 16px 0;">
-    <ng-container #facesheetHost></ng-container>
+    <ng-container #sharedBannerHost></ng-container>
   </div>
 
   <!-- ALWAYS VISIBLE GRID -->
@@ -98,7 +97,7 @@ const ON_DEMAND_TABS = [
   `,
 })
 export class AppComponent implements OnInit {
-  @ViewChild('facesheetHost',  { read: ViewContainerRef, static: true }) facesheetHost!: ViewContainerRef;
+  @ViewChild('sharedBannerHost', { read: ViewContainerRef, static: true }) sharedBannerHost!: ViewContainerRef;
   @ViewChild('vitalsHost',     { read: ViewContainerRef, static: true }) vitalsHost!: ViewContainerRef;
   @ViewChild('diseasesHost',   { read: ViewContainerRef, static: true }) diseasesHost!: ViewContainerRef;
   @ViewChild('historyHost',    { read: ViewContainerRef, static: true }) historyHost!: ViewContainerRef;
@@ -118,7 +117,9 @@ export class AppComponent implements OnInit {
     this.patientId = this.route.snapshot.params?.['patientKey'] || 'patient-P001';
     this.patientIdDisplay = this.patientId.replace('patient-', '');
 
-    await this.loadInto('facesheet',  this.facesheetHost);
+    // تحميل البانر المشترك بدلاً من الـ facesheet القديم
+    await this.loadSharedBanner();
+
     await this.loadInto('vitals',     this.vitalsHost);
     await this.loadInto('diseases',   this.diseasesHost);
     await this.loadInto('history',    this.historyHost);
@@ -128,13 +129,28 @@ export class AppComponent implements OnInit {
     window.addEventListener('HIS_SHELL_MESSAGE', (e: any) => {
       this.ngZone.run(() => {
         const target = e.detail.targetPatientId;
-        // الفحص الآن أصبح دقيقاً بناءً على الـ Id الكامل للمسار
         if (target === this.patientId) {
           this.lastShellMessage = e.detail.content;
           console.log(`EMR Shell (${this.patientId}) received message!`);
         }
       });
     });
+  }
+
+  async loadSharedBanner() {
+    try {
+      const m = await loadRemoteModule({
+        remoteEntry: 'http://localhost:8200/remoteEntry.json',
+        exposedModule: './PatientBanner'
+      });
+      const comp: Type<any> = m['PatientBannerComponent'];
+      this.sharedBannerHost.clear();
+      const ref = this.sharedBannerHost.createComponent(comp);
+      ref.instance.patientId = this.patientIdDisplay;
+      ref.changeDetectorRef.detectChanges();
+    } catch (e) {
+      console.error('Failed to load shared PatientBannerComponent inside EMR Shell:', e);
+    }
   }
 
   sendMessageToShell() {

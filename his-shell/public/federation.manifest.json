@@ -2,5 +2,7 @@
   "patient-mfe":      "http://localhost:8081/remoteEntry.json",
   "pharmacy-mfe":     "http://localhost:8082/remoteEntry.json",
   "central-mfe":      "http://localhost:8083/remoteEntry.json",
-  "emr-shell":        "http://localhost:8090/remoteEntry.json"
+  "emr-shell":        "http://localhost:8090/remoteEntry.json",
+  "lab-mfe":          "http://localhost:8102/remoteEntry.json",
+  "shared-lib":       "http://localhost:8200/remoteEntry.json"
 }
