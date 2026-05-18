@@ -8,12 +8,30 @@
 
 النظام عبارة عن بيئة متكاملة تدار عن طريق **Host Shell** رئيسية تقوم باحتضان وتحميل الموديولات الطبية بشكل ديناميكي أثناء وقت التشغيل (Runtime). تم تقسيم المستشفى الرقمي إلى مشاريع مستقلة تماماً:
 *   **البوابة الرئيسية (Host Shell - Port 8080)**: الواجهة الكبرى وحارس المسارات وشريط التبويبات المرن.
-*   **مكتبة الواجهات المشتركة (Shared UI Library - Port 8200)**: مكتبة المكونات الموحدة التي يتم استدعاؤها ديناميكياً لتفادي تكرار الواجهات.
+*   **مكتبة الواجهات المشتركة (Shared UI Library - Port 8200)**: مكتبة المكونات الموحدة التي يتم استدعاء مكوناتها **ديناميكياً أثناء وقت التشغيل (Runtime Dynamic Loading)**.
 *   **الملف الطبي الموحد (EMR Shell - Port 8090)**: النظام الطبي الإلكتروني الذي يربط التحاليل والروشتات والمؤشرات الحيوية للمريض.
 *   **المختبر والتحاليل (Laboratory MFE - Port 8102)**: قسم التحاليل الطبية لإدخال ومراقبة مؤشرات الدم والقلب.
 *   **الصيدلية الذكية (Pharmacy MFE - Port 8082)**: قسم صرف الأدوية وتتبع المخزون والوصفات النشطة.
 
-### 📐 معمارية الموديولات الطبية (Architecture Diagram)
+---
+
+## 🎨 لقطات حية وتكامل الأنظمة (Live Project Proofs)
+
+### 🖥️ البوابة الرئيسية وقائمة المرضى (Host Shell):
+شريط التبويبات الفاخر والأنيق مع خاصية الالتفاف التلقائي لحماية الواجهة عند زيادة التبويبات المفتوحة:
+![HIS Dashboard & Tabs](docs/images/dashboard_tabs.png)
+
+### 🔬 موديول المختبر والتحاليل تفاعلياً (Laboratory MFE):
+تكامل مكون البحث والبانر المشترك مع تحديث تحاليل المريض خالد فوراً مع مؤشرات عاجلة وحرجة:
+![Khaled Cardiac Laboratory Results](docs/images/laboratory_results.png)
+
+### 📁 ملف المريض الإلكتروني EMR بالبانر الموحد:
+استدعاء البانر المشترك ديناميكياً من المكتبة المشتركة واستبدال اللوحة القديمة بالكامل:
+![EMR Shell Shared Patient Banner](docs/images/emr_shared_banner.png)
+
+---
+
+## 📐 معمارية الموديولات الطبية (Architecture Diagram)
 ```mermaid
 graph TD
     Host["Host Shell (Port 8080)"] -->|يحمل ديناميكياً| Pharmacy["Pharmacy MFE (Port 8082)"]
@@ -71,7 +89,7 @@ docker-compose up -d --build
 المكتبة المشتركة `his-shared-lib` على منفذ `8200` هي النواة البرمجية الموحدة للمستشفى.
 
 ### 1. تصدير المكونات (Exposing Components)
-داخل [federation.config.js](file:///E:/HealthOperations_Anti/his-shared-lib/federation.config.js) الخاص بالمكتبة، نقوم بتعريف المكونات المصدرة للجميع:
+داخل `federation.config.js` الخاص بالمكتبة، نقوم بتعريف المكونات المصدرة للجميع:
 ```javascript
 const { withNativeFederation, shareAll } = require('@angular-architects/native-federation/config');
 
@@ -151,7 +169,7 @@ ng add @angular-architects/native-federation --port 8103
 ```
 
 ### الخطوة 2: تسجيل الموديول في الشيل الرئيسي (`his-shell`)
-قم بإضافة المكون في ملف التعريف [federation.manifest.json](file:///E:/HealthOperations_Anti/his-shell/public/federation.manifest.json):
+قم بإضافة المكون في ملف التعريف `federation.manifest.json`:
 ```json
 {
   "shared-lib": "http://localhost:8200/remoteEntry.json",
@@ -159,10 +177,10 @@ ng add @angular-architects/native-federation --port 8103
   "radiology-mfe": "http://localhost:8103/remoteEntry.json" // الموديول الجديد
 }
 ```
-ثم قم بتسجيله في القائمة البرمجية [menus.config.ts](file:///E:/HealthOperations_Anti/his-shell/src/app/menus.config.ts) ليتم تصييره في شريط التبويبات الفاخر.
+ثم قم بتسجيله في القائمة البرمجية `menus.config.ts` ليتم تصييره في شريط التبويبات الفاخر.
 
 ### الخطوة 3: التسجيل في Docker Compose
-أضف الموديول الجديد في ملف [docker-compose.yml](file:///E:/HealthOperations_Anti/docker-compose.yml):
+أضف الموديول الجديد في ملف `docker-compose.yml`:
 ```yaml
   his-radiology-mfe:
     build:
@@ -195,18 +213,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
-
----
-
-## 📸 لقطات حية وتكامل الأنظمة (Live Project Proofs)
-
-### 🔬 موديول المختبر والتحاليل تفاعلياً:
-تكامل مكون البحث والبانر المشترك مع تحديث تحاليل المريض خالد فوراً:
-![Khaled Cardiac Laboratory Results](file:///C:/Users/EL-Mostwred/.gemini/antigravity/brain/927b21c7-7327-4322-9275-c032c396d134/.tempmediaStorage/media_927b21c7-7327-4322-9275-c032c396d134_1779016493708.png)
-
-### 📁 ملف المريض الإلكتروني EMR بالبانر الموحد:
-استبدال البانر المحلي بالبانر المشترك بنجاح تام:
-![EMR Shell Shared Patient Banner](file:///C:/Users/EL-Mostwred/.gemini/antigravity/brain/927b21c7-7327-4322-9275-c032c396d134/.tempmediaStorage/media_927b21c7-7327-4322-9275-c032c396d134_1779016555045.png)
 
 ---
 *تم كتابة وتدقيق هذا الملف ليكون المرجع الشامل والأساس لبنية الـ Micro-Frontends الطبية.* 🌐🏥💎
